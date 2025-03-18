@@ -3,12 +3,11 @@ import '../index.css';
 
 const Navbar = () => {
     return (
-        <nav>
-            <h2 className='text-3xl font-bold text-blue-500'>Tailwind si o no?</h2>
-            <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/clients">Clientes</Link></li>
-                <li><Link to="/transactions">Movimientos</Link></li>
+        <nav className='bg-gray-900 text-white p-4'>
+            <ul className='flex justify-center space-x-12'>
+                <li><Link to="/" className='hover:text-gray-400 transition'>Home</Link></li>
+                <li><Link to="/clients" className='hover:text-gray-400 transition'>Clientes</Link></li>
+                <li><Link to="/transactions" className='hover:text-gray-400 transition'>Movimientos</Link></li>
             </ul>
         </nav>
     );
