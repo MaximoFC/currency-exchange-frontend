@@ -48,14 +48,14 @@ const Home = () => {
 
             {/* Formulario */}
 
-            <div className="md:col-span-3 bg-gray-100 rounded-2xl shadow-md">
+            <div className="md:col-span-3 bg-gray-300 rounded-2xl shadow-md p-5">
                 <h2 className="text-xl font-semibold mb-4">Realizar una transacción</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <select 
                         name="type" 
                         value={formData.type}
                         onChange={handleChange}
-                        className="w-full p-2 border rounded"
+                        className="w-full p-2 border rounded bg-white"
                     >
                         <option value="buy">Compra</option>
                         <option value="sell">Venta</option>
@@ -87,7 +87,7 @@ const Home = () => {
                         value={formData.amount}
                         onChange={handleChange}
                         placeholder="Monto"
-                        className="w-full p-2 border rounded"
+                        className="w-full p-2 border rounded bg-white"
                     />
                     <input 
                         type="number"
@@ -95,7 +95,7 @@ const Home = () => {
                         value={formData.price}
                         onChange={handleChange}
                         placeholder="Precio"
-                        className="w-full p-2 border rounded"
+                        className="w-full p-2 border rounded bg-white"
                     />
                     <button
                         type="submit"
