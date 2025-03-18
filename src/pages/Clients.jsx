@@ -1,7 +1,7 @@
 const Clients = () => {
     return(
         <div>
-            <h1>Bienvenido al Exchange</h1>
+            <h1>Bienvenido al apartado de Clientes</h1>
         </div>
     );
 };
