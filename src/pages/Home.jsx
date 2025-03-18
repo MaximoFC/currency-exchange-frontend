@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ClientSelectionModal from "../components/ClientSelectionModal";
 
 const Home = () => {
     const [formData, setFormData] = useState({
@@ -8,6 +9,9 @@ const Home = () => {
         price: ""
     });
 
+    const [selectedClient, setSelectedClient] = useState(null);
+    const [isOpenModal, setIsOpenModal] = useState(false);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -15,6 +19,13 @@ const Home = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formData);
+    };
+
+    const openModal = () => setIsOpenModal(true);
+    const closeModal = () => setIsOpenModal(false);
+    const handleSelectClient = (client) => {
+        setSelectedClient(client);
+        closeModal();
     };
 
     return(
@@ -49,6 +60,27 @@ const Home = () => {
                         <option value="buy">Compra</option>
                         <option value="sell">Venta</option>
                     </select>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Cliente</label>
+                        <div className="flex items-center gap-2">
+                            <input 
+                                type="text"
+                                value={selectedClient ? selectedClient.name : ""}
+                                readOnly
+                                className="border p-2 rounded w-full bg-gray-100"
+                                placeholder="Selecciona un cliente"
+                            />
+                            <button
+                                type="button"
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                onClick={openModal}
+                            >
+                                Seleccionar
+                            </button>
+                        </div>
+                    </div>
+
                     <input 
                         type="number"
                         name="amount"
@@ -73,6 +105,12 @@ const Home = () => {
                     </button>
                 </form>
             </div>
+            {isOpenModal && (
+                <ClientSelectionModal
+                    onSelect={handleSelectClient}
+                    onClose={closeModal}
+                />
+            )}
         </div>
     );
 };
