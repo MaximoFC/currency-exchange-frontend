@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Clients = () => {
     const [formData, setFormData] = useState({
@@ -6,7 +7,15 @@ const Clients = () => {
         cell: ""
     });
 
+    const [clients, setClients] = useState([]);
+    const [search, setSearch] = useState("");
     const [message, setMessage] = useState("");
+
+    useEffect(() => {
+        axios.get("http://localhost:4000/clients")
+            .then(response => setClients(response.data))
+            .catch(error => console.error("Error fetching clients: ", error.message));
+    }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,6 +55,33 @@ const Clients = () => {
                     Confirmar
                 </button>
             </form>
+
+            <h2 className="text-xl font-semibold my-4">Lista de Clientes</h2>
+            <input 
+                type="text"
+                placeholder="Buscar cliente"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full p-2 border rounded mb-4"
+            />
+            <table className="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr className="bg-gray-200">
+                        <th className="border p-2">Nombre</th>
+                        <th className="border p-2">Teléfono</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {clients.filter(client => 
+                        client.name.toLowerCase().includes(search.toLowerCase())
+                    ).map(client => (
+                        <tr key={client.id}>
+                            <td className="border p-2">{client.name}</td>
+                            <td className="border p-2">{client.cell}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

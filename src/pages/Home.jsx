@@ -29,7 +29,7 @@ const Home = () => {
     };
 
     return(
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-12">
 
             {/* Montos */}
             
