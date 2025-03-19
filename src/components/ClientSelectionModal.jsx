@@ -1,20 +1,21 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const ClientSelectionModal = ({ onSelect, onClose, onAddNew }) => {
     const [clients, setClients] = useState([]);
     const [search, setSearch] = useState("");
 
     useEffect(() => {
-        setClients([
-            {id: 1, name: "Máximo Callejas"},
-            {id: 2, name: "Fernando Apud"},
-            {id: 3, name: "Roberto Gómez Bolaños"}
-        ])
-    })
+        axios.get("http://localhost:4000/clients")
+            .then(response => {
+                setClients(response.data);
+            })
+            .catch(error => console.error("Error fetching clients: ", error.message));
+    }, []);
 
-    const filteredClients = clients ? clients.filter(client => 
+    const filteredClients = clients.filter(client => 
         client.name.toLowerCase().includes(search.toLowerCase())
-    ) : [];
+    );
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">

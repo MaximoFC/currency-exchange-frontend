@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import ClientSelectionModal from "../components/ClientSelectionModal";
 
 const Home = () => {
@@ -11,14 +12,49 @@ const Home = () => {
 
     const [selectedClient, setSelectedClient] = useState(null);
     const [isOpenModal, setIsOpenModal] = useState(false);
+    const [businessData, setBusinessData] = useState({
+        ARS: 0,
+        USD: 0,
+        EUR: 0
+    });
+
+    useEffect(() => {
+        axios.get("http://localhost:4000/business")
+            .then(response => {
+                setBusinessData(response.data);
+            })
+            .catch(error => console.error("Error fetching amounts: ", error.message));
+    }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+
+        if(!selectedClient) {
+            alert("Selecciona un cliente");
+            return;
+        }
+
+        const transactionData = {
+            ...formData,
+            clientId: selectedClient.id
+        };
+
+        try {
+            await axios.post("http://localhost:4000/transactions", transactionData);
+            alert("Transacción realizada con éxito");
+
+            const response = await axios.get("http://localhost:4000/business");
+            setBusinessData(response.data);
+
+            setFormData({ type:"buy", name:"", amount:"", price:"" });
+            setSelectedClient(null);
+        } catch (error) {
+            console.error("Error in transaction: ", error.message);
+        }
     };
 
     const openModal = () => setIsOpenModal(true);
@@ -35,15 +71,15 @@ const Home = () => {
             
             <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-md">
                 <h3 className="text-xl font-semibold">Pesos (ARS)</h3>
-                <p className="text-xl">100</p>
+                <p className="text-xl">{businessData.ARS}</p>
             </div>
             <div className="bg-green-600 text-white p-6 rounded-2xl shadow-md">
                 <h3 className="text-xl font-semibold">Dólares (USD)</h3>
-                <p className="text-xl">100</p>
+                <p className="text-xl">{businessData.USD}</p>
             </div>
             <div className="bg-yellow-600 text-white p-6 rounded-2xl shadow-md">
                 <h3 className="text-xl font-semibold">Euros (EUR)</h3>
-                <p className="text-xl">100</p>
+                <p className="text-xl">{businessData.EUR}</p>
             </div>
 
             {/* Formulario */}
