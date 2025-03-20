@@ -23,7 +23,19 @@ const Clients = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    }
+
+        try {
+            const response = await axios.post("http://localhost:4000/clients", formData);
+            setMessage("Cliente registrado con éxito");
+
+            setFormData({name: "", cell:""});
+
+            setClients([...clients, response.data]);
+        } catch (error) {
+            console.error("Error fetching client: ", error.message);
+            setMessage("Error al registrar cliente");
+        }
+    };
 
     return(
         <div className="max-w-lg mx-auto mt-10 p-6 bg-gray-100 rounded-2xl shadow-md">

@@ -19,7 +19,7 @@ const Home = () => {
     });
 
     useEffect(() => {
-        axios.get("http://localhost:4000/business")
+        axios.get("http://localhost:4000/businesses")
             .then(response => {
                 setBusinessData(response.data);
             })
@@ -47,7 +47,7 @@ const Home = () => {
             await axios.post("http://localhost:4000/transactions", transactionData);
             alert("Transacción realizada con éxito");
 
-            const response = await axios.get("http://localhost:4000/business");
+            const response = await axios.get("http://localhost:4000/businesses");
             setBusinessData(response.data);
 
             setFormData({ type:"buy", name:"", amount:"", price:"" });
