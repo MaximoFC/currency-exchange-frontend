@@ -6,6 +6,8 @@ import InvestmentModal from "../components/InvestmentModal";
 const Home = () => {
     const [formData, setFormData] = useState({
         type: "buy",
+        fromCurrency: "ars",
+        toCurrency: "usd",
         name: "",
         amount: "",
         price: ""
@@ -52,6 +54,11 @@ const Home = () => {
             return;
         }
 
+        if (formData.fromCurrency === formData.toCurrency) {
+            alert("Debes seleccionar monedas diferentes para la transacción");
+            return;
+        }
+
         const transactionData = {
             ...formData,
             clientId: selectedClient.id
@@ -64,7 +71,7 @@ const Home = () => {
             const response = await axios.get("http://localhost:4000/businesses");
             setBusinessData(response.data);
 
-            setFormData({ type:"buy", name:"", amount:"", price:"" });
+            setFormData({ type:"buy", fromCurrency: "ars", toCurrency:"usd", name:"", amount:"", price:"" });
             setSelectedClient(null);
         } catch (error) {
             console.error("Error in transaction: ", error.message);
@@ -149,6 +156,25 @@ const Home = () => {
                         <option value="buy">Compra</option>
                         <option value="sell">Venta</option>
                     </select>
+
+                    <div className="grid grid-cols-2 gap-2">
+                        <div>
+                            <label className="text-sm font-medium">Desde</label>
+                            <select name="fromCurrency" value={formData.fromCurrency} onChange={handleChange} className="w-full p-2 border rounded bg-white">
+                                <option value="ars">Pesos (ARS)</option>
+                                <option value="usd">Dólares (USD)</option>
+                                <option value="eur">Euros (EUR)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="text-sm font-medium">Hacia</label>
+                            <select name="toCurrency" value={formData.toCurrency} onChange={handleChange} className="w-full p-2 border rounded bg-white">
+                                <option value="ars">Pesos (ARS)</option>
+                                <option value="usd">Dólares (USD)</option>
+                                <option value="eur">Euros (EUR)</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Cliente</label>
