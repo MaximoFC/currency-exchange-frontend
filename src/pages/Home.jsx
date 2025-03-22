@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ClientSelectionModal from "../components/ClientSelectionModal";
+import InvestmentModal from "../components/InvestmentModal";
 
 const Home = () => {
     const [formData, setFormData] = useState({
@@ -13,10 +14,23 @@ const Home = () => {
     const [selectedClient, setSelectedClient] = useState(null);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [businessData, setBusinessData] = useState({
-        ARS: 0,
-        USD: 0,
-        EUR: 0
+        ars: 0,
+        usd: 0,
+        eur: 0
     });
+    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
+    const [selectedCurrency, setSelectedCurrency] = useState("");
+    const [investmentAmount, setInvestmentAmount] = useState("");
+
+    const openInvestmentModal = (currency) => {
+        setSelectedCurrency(currency);
+        setIsInvestmentModalOpen(true);
+    };
+
+    const closeInvestmenModal = () => {
+        setIsInvestmentModalOpen(false);
+        setInvestmentAmount("");
+    };
 
     useEffect(() => {
         axios.get("http://localhost:4000/businesses")
@@ -64,6 +78,27 @@ const Home = () => {
         closeModal();
     };
 
+    const handleInvestmentSubmit = async () => {
+        if(!investmentAmount) {
+            alert("Ingresa un monto válido");
+            return;
+        }
+
+        try {
+            await axios.put("http://localhost:4000/businesses/update", {
+                currency: selectedCurrency,
+                amount: parseInt(investmentAmount)
+            });
+
+            alert("Inversión agregada con éxito");
+            const response = await axios.get("http://localhost:4000/businesses");
+            setBusinessData(response.data);
+            closeInvestmenModal();
+        } catch(error) {
+            console.error("Error updating investment: ", error.message);
+        }
+    };
+
     return(
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-12">
 
@@ -71,15 +106,33 @@ const Home = () => {
             
             <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-md">
                 <h3 className="text-xl font-semibold">Pesos (ARS)</h3>
-                <p className="text-xl">{businessData.ARS}</p>
+                <p className="text-xl">{businessData.ars}</p>
+                <button
+                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
+                    onClick={() => openInvestmentModal("ars")}
+                >
+                    +
+                </button>
             </div>
             <div className="bg-green-600 text-white p-6 rounded-2xl shadow-md">
                 <h3 className="text-xl font-semibold">Dólares (USD)</h3>
-                <p className="text-xl">{businessData.USD}</p>
+                <p className="text-xl">{businessData.usd}</p>
+                <button
+                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
+                    onClick={() => openInvestmentModal("usd")}
+                >
+                    +
+                </button>
             </div>
             <div className="bg-yellow-600 text-white p-6 rounded-2xl shadow-md">
                 <h3 className="text-xl font-semibold">Euros (EUR)</h3>
-                <p className="text-xl">{businessData.EUR}</p>
+                <p className="text-xl">{businessData.eur}</p>
+                <button
+                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
+                    onClick={() => openInvestmentModal("eur")}
+                >
+                    +
+                </button>
             </div>
 
             {/* Formulario */}
@@ -147,6 +200,14 @@ const Home = () => {
                     onClose={closeModal}
                 />
             )}
+            <InvestmentModal
+                isOpen={isInvestmentModalOpen}
+                onClose={closeInvestmenModal}
+                selectedCurrency={selectedCurrency}
+                investmentAmount={investmentAmount}
+                setInvestmentAmount={setInvestmentAmount}
+                onConfirm={handleInvestmentSubmit}
+            />
         </div>
     );
 };
