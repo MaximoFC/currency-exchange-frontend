@@ -2,9 +2,9 @@ const InvestmentModal = ({ isOpen, onClose, selectedCurrency, investmentAmount, 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-5 rounded-lg shadow-lg">
-                <h2 className="text-lg font-semibold mb-4">Agregar capital en {selectedCurrency}</h2>
+                <h2 className="text-lg font-semibold mb-4">Agregar capital en {selectedCurrency.toUpperCase()}</h2>
                 <input
                     type="number"
                     value={investmentAmount}

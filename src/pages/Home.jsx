@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ClientSelectionModal from "../components/ClientSelectionModal";
 import InvestmentModal from "../components/InvestmentModal";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
     const [formData, setFormData] = useState({
@@ -16,9 +18,9 @@ const Home = () => {
     const [selectedClient, setSelectedClient] = useState(null);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [businessData, setBusinessData] = useState({
-        ars: 0,
-        usd: 0,
-        eur: 0
+        ars: "...",
+        usd: "...",
+        eur: "..."
     });
     const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
     const [selectedCurrency, setSelectedCurrency] = useState("");
@@ -49,13 +51,23 @@ const Home = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(!selectedClient) {
-            alert("Selecciona un cliente");
+        if (!selectedClient) {
+            toast.warn("Selecciona un cliente");
             return;
         }
 
         if (formData.fromCurrency === formData.toCurrency) {
-            alert("Debes seleccionar monedas diferentes para la transacción");
+            toast.warn("Debes seleccionar monedas diferentes para la transacción");
+            return;
+        }
+
+        if (!formData.amount || formData.amount <= 0) {
+            toast.warn("Debes ingresar un monto válido");
+            return;
+        }
+
+        if (!formData.price || formData.price <= 0) {
+            toast.warn("Debes ingresar un precio válido");
             return;
         }
 
@@ -68,7 +80,7 @@ const Home = () => {
 
         try {
             await axios.post("http://localhost:4000/transactions", transactionData);
-            alert("Transacción realizada con éxito");
+            toast.success("Transacción realizada con éxito");
 
             const response = await axios.get("http://localhost:4000/businesses");
             setBusinessData(response.data);
@@ -89,7 +101,7 @@ const Home = () => {
 
     const handleInvestmentSubmit = async () => {
         if(!investmentAmount) {
-            alert("Ingresa un monto válido");
+            toast.warn("Ingresa un monto válido");
             return;
         }
 
@@ -99,7 +111,7 @@ const Home = () => {
                 amount: parseInt(investmentAmount)
             });
 
-            alert("Inversión agregada con éxito");
+            toast.success("Inversión agregada con éxito");
             const response = await axios.get("http://localhost:4000/businesses");
             setBusinessData(response.data);
             closeInvestmenModal();
@@ -113,35 +125,48 @@ const Home = () => {
 
             {/* Montos */}
             
-            <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-md">
-                <h3 className="text-xl font-semibold">Pesos (ARS)</h3>
-                <p className="text-xl">{businessData.ars}</p>
-                <button
-                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
-                    onClick={() => openInvestmentModal("ars")}
-                >
-                    +
-                </button>
+            <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-md flex justify-between">
+                <div>
+                    <h3 className="text-xl font-semibold">Pesos (ARS)</h3>
+                    <p className="text-xl">${businessData.ars}</p>
+                </div>
+                <div>                                   
+                    <button
+                        className="bg-white text-blue-600 p-2 rounded-full mt-2 cursor-pointer hover:bg-gray-300 transition"
+                        onClick={() => openInvestmentModal("ars")}
+                    >
+                        +
+                    </button>
+                </div>
+
             </div>
-            <div className="bg-green-600 text-white p-6 rounded-2xl shadow-md">
-                <h3 className="text-xl font-semibold">Dólares (USD)</h3>
-                <p className="text-xl">{businessData.usd}</p>
-                <button
-                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
-                    onClick={() => openInvestmentModal("usd")}
-                >
-                    +
-                </button>
+            <div className="bg-green-600 text-white p-6 rounded-2xl shadow-md flex justify-between">
+                <div>
+                    <h3 className="text-xl font-semibold">Dólares (USD)</h3>
+                    <p className="text-xl">${businessData.usd}</p>
+                </div>
+                <div>
+                    <button
+                        className="bg-white text-blue-600 p-2 rounded-full mt-2 cursor-pointer hover:bg-gray-300 transition"
+                        onClick={() => openInvestmentModal("usd")}
+                    >
+                        +
+                    </button>
+                    </div>
             </div>
-            <div className="bg-yellow-600 text-white p-6 rounded-2xl shadow-md">
-                <h3 className="text-xl font-semibold">Euros (EUR)</h3>
-                <p className="text-xl">{businessData.eur}</p>
-                <button
-                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
-                    onClick={() => openInvestmentModal("eur")}
-                >
-                    +
-                </button>
+            <div className="bg-yellow-600 text-white p-6 rounded-2xl shadow-md flex justify-between">
+                <div>
+                    <h3 className="text-xl font-semibold">Euros (EUR)</h3>
+                    <p className="text-xl">${businessData.eur}</p>
+                </div>
+                <div>
+                    <button
+                        className="bg-white text-blue-600 p-2 rounded-full mt-2 cursor-pointer hover:bg-gray-300 transition"
+                        onClick={() => openInvestmentModal("eur")}
+                    >
+                        +
+                    </button>
+                </div>
             </div>
 
             {/* Formulario */}
@@ -228,6 +253,17 @@ const Home = () => {
                         Confirmar
                     </button>
                 </form>
+                <ToastContainer 
+                    position="top-right"
+                    autoClose={2000}
+                    hideProgressBar
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
             </div>
             {isOpenModal && (
                 <ClientSelectionModal

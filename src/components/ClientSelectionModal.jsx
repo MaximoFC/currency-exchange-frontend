@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const ClientSelectionModal = ({ onSelect, onClose, onAddNew }) => {
+const ClientSelectionModal = ({ onSelect, onClose }) => {
     const [clients, setClients] = useState([]);
     const [search, setSearch] = useState("");
+    const navigate = useNavigate();
+
+    const onAddNew = () => {
+        navigate("/clients");
+    }
 
     useEffect(() => {
         axios.get("http://localhost:4000/clients")
