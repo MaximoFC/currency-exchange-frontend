@@ -8,7 +8,7 @@ const Home = () => {
         type: "buy",
         fromCurrency: "ars",
         toCurrency: "usd",
-        name: "",
+        id_client: "",
         amount: "",
         price: ""
     });
@@ -61,7 +61,9 @@ const Home = () => {
 
         const transactionData = {
             ...formData,
-            clientId: selectedClient.id
+            amount: Number(formData.amount),
+            price: Number(formData.price),
+            id_client: selectedClient.id
         };
 
         try {
@@ -71,7 +73,7 @@ const Home = () => {
             const response = await axios.get("http://localhost:4000/businesses");
             setBusinessData(response.data);
 
-            setFormData({ type:"buy", fromCurrency: "ars", toCurrency:"usd", name:"", amount:"", price:"" });
+            setFormData({ type:"buy", fromCurrency: "ars", toCurrency:"usd", id_client:"", amount:"", price:"" });
             setSelectedClient(null);
         } catch (error) {
             console.error("Error in transaction: ", error.message);
@@ -179,6 +181,13 @@ const Home = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Cliente</label>
                         <div className="flex items-center gap-2">
+                            <input 
+                                type="hidden" 
+                                value={selectedClient ? selectedClient.id : ""} 
+                                name="id_client" 
+                            />
+
+                            {/* Input de solo lectura que muestra el nombre del cliente */}
                             <input 
                                 type="text"
                                 value={selectedClient ? selectedClient.name : ""}
