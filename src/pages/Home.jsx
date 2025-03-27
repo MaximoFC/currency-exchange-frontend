@@ -123,7 +123,7 @@ const Home = () => {
     return(
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-12">
 
-            {/* Montos */}
+            {/* Amounts */}
             
             <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
                 <div className="bg-blue-100 p-6 rounded-t-xl">
@@ -171,7 +171,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Formulario */}
+            {/* Form */}
 
             <div className="md:col-span-3 rounded-2xl shadow-md p-5 border border-gray-300 m-10">
                 <h2 className="text-xl font-semibold mb-4">Realizar un cambio</h2>
