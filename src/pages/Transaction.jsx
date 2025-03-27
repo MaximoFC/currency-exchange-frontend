@@ -45,7 +45,7 @@ const Transaction = () => {
 
 
     return(
-        <div className="p-6">
+        <div className="m-6 p-6 border border-gray-300 rounded-xl shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Transacciones realizadas</h2>
             <input 
                 type="text"
@@ -57,7 +57,7 @@ const Transaction = () => {
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                     <thead>
-                        <tr className="bg-gray-100 text-left">
+                        <tr className="bg-stone-800 text-left text-white">
                             <th className="p-2 border">Número de movimiento</th>
                             <th className="p-2 border">Fecha</th>
                             <th className="p-2 border">Moneda de pago</th>
@@ -76,7 +76,7 @@ const Transaction = () => {
                                             height="80"
                                             width="80"
                                             radius="9"
-                                            color="#155dfc"
+                                            color="#292526"
                                             ariaLabel="three-dots-loading"
                                             wrapperStyle={{}}
                                             visible={true}
