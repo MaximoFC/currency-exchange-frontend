@@ -125,43 +125,45 @@ const Home = () => {
 
             {/* Montos */}
             
-            <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-md flex justify-between">
-                <div>
-                    <h3 className="text-xl font-semibold">Pesos (ARS)</h3>
-                    <p className="text-xl">${businessData.ars}</p>
+            <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
+                <div className="bg-blue-100 p-6 rounded-t-xl">
+                    <h3 className="text-xl font-semibold">$ Pesos (ARS)</h3>
+                    <h5 className="text-sm text-gray-600">Disponible</h5>
                 </div>
-                <div>                                   
+                <div className="flex justify-between p-6 items-center rounded-b-xl">
+                    <p className="text-xl">${businessData.ars}</p>                          
                     <button
-                        className="bg-white text-blue-600 p-2 rounded-full mt-2 cursor-pointer hover:bg-gray-300 transition"
+                        className="bg-blue-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-blue-200 transition"
                         onClick={() => openInvestmentModal("ars")}
                     >
                         +
                     </button>
                 </div>
-
             </div>
-            <div className="bg-green-600 text-white p-6 rounded-2xl shadow-md flex justify-between">
-                <div>
-                    <h3 className="text-xl font-semibold">Dólares (USD)</h3>
-                    <p className="text-xl">${businessData.usd}</p>
+            <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
+                <div className="bg-green-100 p-6 rounded-t-xl">
+                    <h3 className="text-xl font-semibold">$ Dólares (USD)</h3>
+                    <h5 className="text-sm text-gray-600">Disponible</h5>
                 </div>
-                <div>
+                <div className="flex justify-between p-6 items-center rounded-b-xl">
+                    <p className="text-xl">${businessData.usd}</p>
                     <button
-                        className="bg-white text-blue-600 p-2 rounded-full mt-2 cursor-pointer hover:bg-gray-300 transition"
+                        className="bg-green-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-green-200 transition"
                         onClick={() => openInvestmentModal("usd")}
                     >
                         +
                     </button>
                     </div>
             </div>
-            <div className="bg-yellow-600 text-white p-6 rounded-2xl shadow-md flex justify-between">
-                <div>
-                    <h3 className="text-xl font-semibold">Euros (EUR)</h3>
-                    <p className="text-xl">${businessData.eur}</p>
+            <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
+                <div className="bg-yellow-100 p-6 rounded-t-xl">
+                    <h3 className="text-xl font-semibold">€ Euros (EUR)</h3>
+                    <h5 className="text-sm text-gray-600">Disponible</h5>
                 </div>
-                <div>
+                <div className="flex justify-between p-6 items-center rounded-b-xl">
+                    <p className="text-xl">${businessData.eur}</p>
                     <button
-                        className="bg-white text-blue-600 p-2 rounded-full mt-2 cursor-pointer hover:bg-gray-300 transition"
+                        className="bg-yellow-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-yellow-200 transition"
                         onClick={() => openInvestmentModal("eur")}
                     >
                         +
@@ -171,8 +173,8 @@ const Home = () => {
 
             {/* Formulario */}
 
-            <div className="md:col-span-3 bg-gray-300 rounded-2xl shadow-md p-5">
-                <h2 className="text-xl font-semibold mb-4">Realizar una transacción</h2>
+            <div className="md:col-span-3 rounded-2xl shadow-md p-5 border border-gray-300 m-10">
+                <h2 className="text-xl font-semibold mb-4">Realizar un cambio</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <select 
                         name="type" 
@@ -211,8 +213,6 @@ const Home = () => {
                                 value={selectedClient ? selectedClient.id : ""} 
                                 name="id_client" 
                             />
-
-                            {/* Input de solo lectura que muestra el nombre del cliente */}
                             <input 
                                 type="text"
                                 value={selectedClient ? selectedClient.name : ""}
@@ -222,7 +222,7 @@ const Home = () => {
                             />
                             <button
                                 type="button"
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                className="bg-stone-800 text-white px-4 py-2 rounded hover:bg-stone-900 cursor-pointer"
                                 onClick={openModal}
                             >
                                 Seleccionar
@@ -248,7 +248,7 @@ const Home = () => {
                     />
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+                        className="w-full bg-stone-800 text-white p-2 rounded hover:bg-stone-900 cursor-pointer"
                     >
                         Confirmar
                     </button>
