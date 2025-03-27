@@ -34,7 +34,7 @@ const ClientSelectionModal = ({ onSelect, onClose }) => {
     <div className="bg-white p-6 rounded-2xl w-96 shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Seleccionar cliente</h2>
         {loading ? (
-            <div className="flex justify-center items-center h-40"> {/* Sección de carga centrada */}
+            <div className="flex justify-center items-center h-40">
                 <ThreeDots
                     height="80"
                     width="80"

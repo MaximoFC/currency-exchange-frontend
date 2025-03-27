@@ -48,7 +48,7 @@ const Clients = () => {
     };
 
     return(
-        <div className="max-w-lg mx-auto mt-10 p-6 bg-gray-100 rounded-2xl shadow-md">
+        <div className="max-w-lg mx-auto m-10 p-6 rounded-xl shadow-md border border-gray-300">
             <h2 className="text-2xl font-semibold mb-4">Registrar cliente</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input 
@@ -71,7 +71,7 @@ const Clients = () => {
                 />
                 <button 
                     type="submit"
-                    className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+                    className="w-full bg-stone-800 text-white p-2 rounded hover:bg-stone-900 cursor-pointer"
                 >
                     Confirmar
                 </button>
@@ -99,7 +99,7 @@ const Clients = () => {
             />
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
-                    <tr className="bg-gray-200">
+                    <tr className="bg-stone-800 text-white">
                         <th className="border p-2">Nombre</th>
                         <th className="border p-2">Teléfono</th>
                     </tr>
@@ -114,7 +114,7 @@ const Clients = () => {
                                         height="80"
                                         width="80"
                                         radius="9"
-                                        color="#155dfc"
+                                        color="#292526"
                                         ariaLabel="three-dots-loading"
                                         wrapperStyle={{}}
                                         visible={true}
