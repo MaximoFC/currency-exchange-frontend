@@ -12,18 +12,18 @@ const InvestmentModal = ({ isOpen, onClose, selectedCurrency, investmentAmount, 
                     placeholder="Ingrese el monto"
                     className="w-full p-2 border rounded mb-4"
                 />
-                <div className="flex justify-end gap-2">
+                <div className="flex flex-col gap-2">
                     <button
-                        className="bg-gray-500 text-white px-4 py-2 rounded"
-                        onClick={onClose}
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        className="bg-blue-600 text-white px-4 py-2 rounded"
+                        className="bg-stone-800 text-white px-4 py-2 rounded cursor-pointer hover:bg-stone-900"
                         onClick={onConfirm}
                     >
                         Confirmar
+                    </button>
+                    <button
+                        className="bg-stone-300 px-4 py-2 rounded cursor-pointer hover:bg-stone-400"
+                        onClick={onClose}
+                    >
+                        Cancelar
                     </button>
                 </div>
             </div>
