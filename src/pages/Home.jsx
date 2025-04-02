@@ -25,6 +25,10 @@ const Home = () => {
     const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
     const [selectedCurrency, setSelectedCurrency] = useState("");
     const [investmentAmount, setInvestmentAmount] = useState("");
+    const [exchangeRates, setExchangeRates] = useState({
+        usd: { buy: "...", sell: "..." },
+        eur: { buy: "...", sell: "..." }
+    })
 
     const openInvestmentModal = (currency) => {
         setSelectedCurrency(currency);
@@ -37,11 +41,24 @@ const Home = () => {
     };
 
     useEffect(() => {
-        axios.get("http://localhost:4000/businesses")
-            .then(response => {
-                setBusinessData(response.data);
+        const fetchBusinessData = axios.get("http://localhost:4000/businesses");
+        const fetchExchangeRates = axios.get("https://api.bluelytics.com.ar/v2/latest");
+
+        Promise.all([fetchBusinessData, fetchExchangeRates])
+            .then(([businessResponse, exchangeResponse]) => {
+                setBusinessData(businessResponse.data);
+                setExchangeRates({
+                    usd: {
+                        buy: exchangeResponse.data.blue.value_buy,
+                        sell: exchangeResponse.data.blue.value_sell
+                    },
+                    eur: {
+                        buy: exchangeResponse.data.blue_euro.value_buy,
+                        sell: exchangeResponse.data.blue_euro.value_sell
+                    }
+                });
             })
-            .catch(error => console.error("Error fetching amounts: ", error.message));
+            .catch(error => console.error("Error fetching data: ", error.message));
     }, []);
 
     const handleChange = (e) => {
@@ -130,14 +147,26 @@ const Home = () => {
                     <h3 className="text-xl font-semibold">$ Pesos (ARS)</h3>
                     <h5 className="text-sm text-gray-600">Disponible</h5>
                 </div>
-                <div className="flex justify-between p-6 items-center rounded-b-xl">
-                    <p className="text-xl">${businessData.ars}</p>                          
-                    <button
-                        className="bg-blue-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-blue-200 transition"
-                        onClick={() => openInvestmentModal("ars")}
-                    >
-                        +
-                    </button>
+                <div className="flex flex-col p-6 items-center rounded-b-xl">
+                    <div className="flex justify-around w-full items-center p-2">
+                        <p className="text-xl">${businessData.ars}</p>                          
+                        <button
+                            className="bg-blue-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-blue-200 transition"
+                            onClick={() => openInvestmentModal("ars")}
+                        >
+                            +
+                        </button>
+                    </div>
+                    <div className="w-full flex justify-between items-center p-2">
+                        <div>
+                            <h4>Referencia</h4>
+                            <p className="text-gray-500">1 USD = ${exchangeRates.usd.sell}</p>
+                        </div>
+                        <div>
+                            <h4>Referencia</h4>
+                            <p className="text-gray-500">1 EUR = ${exchangeRates.eur.sell}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
@@ -145,29 +174,53 @@ const Home = () => {
                     <h3 className="text-xl font-semibold">$ Dólares (USD)</h3>
                     <h5 className="text-sm text-gray-600">Disponible</h5>
                 </div>
-                <div className="flex justify-between p-6 items-center rounded-b-xl">
-                    <p className="text-xl">${businessData.usd}</p>
-                    <button
-                        className="bg-green-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-green-200 transition"
-                        onClick={() => openInvestmentModal("usd")}
-                    >
-                        +
-                    </button>
+                <div className="flex flex-col p-6 items-center rounded-b-xl">
+                    <div className="flex justify-around w-full items-center p-2">
+                        <p className="text-xl">${businessData.usd}</p>
+                        <button
+                            className="bg-green-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-green-200 transition"
+                            onClick={() => openInvestmentModal("usd")}
+                        >
+                            +
+                        </button>
                     </div>
+                    <div className="w-full flex justify-between items-center p-2">
+                        <div>
+                            <h4>Compra</h4>
+                            <p className="text-gray-500">${exchangeRates.usd.buy}</p>
+                        </div>
+                        <div>
+                            <h4>Venta</h4>
+                            <p className="text-gray-500">${exchangeRates.usd.sell}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
                 <div className="bg-yellow-100 p-6 rounded-t-xl">
                     <h3 className="text-xl font-semibold">€ Euros (EUR)</h3>
                     <h5 className="text-sm text-gray-600">Disponible</h5>
                 </div>
-                <div className="flex justify-between p-6 items-center rounded-b-xl">
-                    <p className="text-xl">${businessData.eur}</p>
-                    <button
-                        className="bg-yellow-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-yellow-200 transition"
-                        onClick={() => openInvestmentModal("eur")}
-                    >
-                        +
-                    </button>
+                <div className="flex flex-col p-6 items-center rounded-b-xl">
+                    <div className="flex justify-around w-full items-center p-2">
+                        <p className="text-xl">${businessData.eur}</p>
+                        <button
+                            className="bg-yellow-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-yellow-200 transition"
+                            onClick={() => openInvestmentModal("eur")}
+                        >
+                            +
+                        </button>
+                    </div>
+                    <div className="w-full flex justify-between items-center p-2">
+                        <div>
+                            <h4>Compra</h4>
+                            <p className="text-gray-500">${exchangeRates.eur.buy}</p>
+                        </div>
+                        <div>
+                            <h4>Venta</h4>
+                            <p className="text-gray-500">${exchangeRates.eur.sell}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
