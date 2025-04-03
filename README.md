@@ -59,3 +59,4 @@ npm run dev
 👨🏻‍💻 **Máximo Callejas**
 - **Email:** maximofcallejas@gmail.com
 - **GitHub:** [https://github.com/MaximoFC](https://github.com/MaximoFC)
+- **LinkedIn:** [www.linkedin.com/in/maximofcallejas](https://www.linkedin.com/in/maximofcallejas)
