@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ClientSelectionModal from "../components/ClientSelectionModal";
 import InvestmentModal from "../components/InvestmentModal";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
     const [formData, setFormData] = useState({
@@ -16,13 +18,17 @@ const Home = () => {
     const [selectedClient, setSelectedClient] = useState(null);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [businessData, setBusinessData] = useState({
-        ars: 0,
-        usd: 0,
-        eur: 0
+        ars: "...",
+        usd: "...",
+        eur: "..."
     });
     const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
     const [selectedCurrency, setSelectedCurrency] = useState("");
     const [investmentAmount, setInvestmentAmount] = useState("");
+    const [exchangeRates, setExchangeRates] = useState({
+        usd: { buy: "...", sell: "..." },
+        eur: { buy: "...", sell: "..." }
+    })
 
     const openInvestmentModal = (currency) => {
         setSelectedCurrency(currency);
@@ -35,11 +41,24 @@ const Home = () => {
     };
 
     useEffect(() => {
-        axios.get("http://localhost:4000/businesses")
-            .then(response => {
-                setBusinessData(response.data);
+        const fetchBusinessData = axios.get("http://localhost:4000/businesses");
+        const fetchExchangeRates = axios.get("https://api.bluelytics.com.ar/v2/latest");
+
+        Promise.all([fetchBusinessData, fetchExchangeRates])
+            .then(([businessResponse, exchangeResponse]) => {
+                setBusinessData(businessResponse.data);
+                setExchangeRates({
+                    usd: {
+                        buy: exchangeResponse.data.blue.value_buy,
+                        sell: exchangeResponse.data.blue.value_sell
+                    },
+                    eur: {
+                        buy: exchangeResponse.data.blue_euro.value_buy,
+                        sell: exchangeResponse.data.blue_euro.value_sell
+                    }
+                });
             })
-            .catch(error => console.error("Error fetching amounts: ", error.message));
+            .catch(error => console.error("Error fetching data: ", error.message));
     }, []);
 
     const handleChange = (e) => {
@@ -49,13 +68,23 @@ const Home = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(!selectedClient) {
-            alert("Selecciona un cliente");
+        if (!selectedClient) {
+            toast.warn("Selecciona un cliente");
             return;
         }
 
         if (formData.fromCurrency === formData.toCurrency) {
-            alert("Debes seleccionar monedas diferentes para la transacción");
+            toast.warn("Debes seleccionar monedas diferentes para la transacción");
+            return;
+        }
+
+        if (!formData.amount || formData.amount <= 0) {
+            toast.warn("Debes ingresar un monto válido");
+            return;
+        }
+
+        if (!formData.price || formData.price <= 0) {
+            toast.warn("Debes ingresar un precio válido");
             return;
         }
 
@@ -68,7 +97,7 @@ const Home = () => {
 
         try {
             await axios.post("http://localhost:4000/transactions", transactionData);
-            alert("Transacción realizada con éxito");
+            toast.success("Transacción realizada con éxito");
 
             const response = await axios.get("http://localhost:4000/businesses");
             setBusinessData(response.data);
@@ -89,7 +118,7 @@ const Home = () => {
 
     const handleInvestmentSubmit = async () => {
         if(!investmentAmount) {
-            alert("Ingresa un monto válido");
+            toast.warn("Ingresa un monto válido");
             return;
         }
 
@@ -99,7 +128,7 @@ const Home = () => {
                 amount: parseInt(investmentAmount)
             });
 
-            alert("Inversión agregada con éxito");
+            toast.success("Inversión agregada con éxito");
             const response = await axios.get("http://localhost:4000/businesses");
             setBusinessData(response.data);
             closeInvestmenModal();
@@ -111,43 +140,94 @@ const Home = () => {
     return(
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-12">
 
-            {/* Montos */}
+            {/* Amounts */}
             
-            <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-md">
-                <h3 className="text-xl font-semibold">Pesos (ARS)</h3>
-                <p className="text-xl">{businessData.ars}</p>
-                <button
-                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
-                    onClick={() => openInvestmentModal("ars")}
-                >
-                    +
-                </button>
+            <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
+                <div className="bg-blue-100 p-6 rounded-t-xl">
+                    <h3 className="text-xl font-semibold">$ Pesos (ARS)</h3>
+                    <h5 className="text-sm text-gray-600">Disponible</h5>
+                </div>
+                <div className="flex flex-col p-6 items-center rounded-b-xl">
+                    <div className="flex justify-around w-full items-center p-2">
+                        <p className="text-xl">${businessData.ars}</p>                          
+                        <button
+                            className="bg-blue-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-blue-200 transition"
+                            onClick={() => openInvestmentModal("ars")}
+                        >
+                            +
+                        </button>
+                    </div>
+                    <div className="w-full flex justify-between items-center p-2">
+                        <div>
+                            <h4>Referencia</h4>
+                            <p className="text-gray-500">1 USD = ${exchangeRates.usd.sell}</p>
+                        </div>
+                        <div>
+                            <h4>Referencia</h4>
+                            <p className="text-gray-500">1 EUR = ${exchangeRates.eur.sell}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="bg-green-600 text-white p-6 rounded-2xl shadow-md">
-                <h3 className="text-xl font-semibold">Dólares (USD)</h3>
-                <p className="text-xl">{businessData.usd}</p>
-                <button
-                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
-                    onClick={() => openInvestmentModal("usd")}
-                >
-                    +
-                </button>
+            <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
+                <div className="bg-green-100 p-6 rounded-t-xl">
+                    <h3 className="text-xl font-semibold">$ Dólares (USD)</h3>
+                    <h5 className="text-sm text-gray-600">Disponible</h5>
+                </div>
+                <div className="flex flex-col p-6 items-center rounded-b-xl">
+                    <div className="flex justify-around w-full items-center p-2">
+                        <p className="text-xl">${businessData.usd}</p>
+                        <button
+                            className="bg-green-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-green-200 transition"
+                            onClick={() => openInvestmentModal("usd")}
+                        >
+                            +
+                        </button>
+                    </div>
+                    <div className="w-full flex justify-between items-center p-2">
+                        <div>
+                            <h4>Compra</h4>
+                            <p className="text-gray-500">${exchangeRates.usd.buy}</p>
+                        </div>
+                        <div>
+                            <h4>Venta</h4>
+                            <p className="text-gray-500">${exchangeRates.usd.sell}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="bg-yellow-600 text-white p-6 rounded-2xl shadow-md">
-                <h3 className="text-xl font-semibold">Euros (EUR)</h3>
-                <p className="text-xl">{businessData.eur}</p>
-                <button
-                    className="bg-white text-blue-600 p-2 rounded-full mt-2"
-                    onClick={() => openInvestmentModal("eur")}
-                >
-                    +
-                </button>
+            <div className="text-black rounded-xl shadow-md flex flex-col border border-gray-300">
+                <div className="bg-yellow-100 p-6 rounded-t-xl">
+                    <h3 className="text-xl font-semibold">€ Euros (EUR)</h3>
+                    <h5 className="text-sm text-gray-600">Disponible</h5>
+                </div>
+                <div className="flex flex-col p-6 items-center rounded-b-xl">
+                    <div className="flex justify-around w-full items-center p-2">
+                        <p className="text-xl">${businessData.eur}</p>
+                        <button
+                            className="bg-yellow-100 text-black p-2 rounded-full mt-2 cursor-pointer hover:bg-yellow-200 transition"
+                            onClick={() => openInvestmentModal("eur")}
+                        >
+                            +
+                        </button>
+                    </div>
+                    <div className="w-full flex justify-between items-center p-2">
+                        <div>
+                            <h4>Compra</h4>
+                            <p className="text-gray-500">${exchangeRates.eur.buy}</p>
+                        </div>
+                        <div>
+                            <h4>Venta</h4>
+                            <p className="text-gray-500">${exchangeRates.eur.sell}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Formulario */}
+            {/* Form */}
 
-            <div className="md:col-span-3 bg-gray-300 rounded-2xl shadow-md p-5">
-                <h2 className="text-xl font-semibold mb-4">Realizar una transacción</h2>
+            <div className="md:col-span-3 rounded-2xl shadow-md p-5 border border-gray-300 m-10">
+                <h2 className="text-xl font-semibold mb-4">Realizar un cambio</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <select 
                         name="type" 
@@ -186,8 +266,6 @@ const Home = () => {
                                 value={selectedClient ? selectedClient.id : ""} 
                                 name="id_client" 
                             />
-
-                            {/* Input de solo lectura que muestra el nombre del cliente */}
                             <input 
                                 type="text"
                                 value={selectedClient ? selectedClient.name : ""}
@@ -197,7 +275,7 @@ const Home = () => {
                             />
                             <button
                                 type="button"
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                                className="bg-stone-800 text-white px-4 py-2 rounded hover:bg-stone-900 cursor-pointer"
                                 onClick={openModal}
                             >
                                 Seleccionar
@@ -223,11 +301,22 @@ const Home = () => {
                     />
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+                        className="w-full bg-stone-800 text-white p-2 rounded hover:bg-stone-900 cursor-pointer"
                     >
                         Confirmar
                     </button>
                 </form>
+                <ToastContainer 
+                    position="top-right"
+                    autoClose={2000}
+                    hideProgressBar
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
             </div>
             {isOpenModal && (
                 <ClientSelectionModal
