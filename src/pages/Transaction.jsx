@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { ThreeDots } from "react-loader-spinner";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const Transaction = () => {
     const [transactions, setTransactions] = useState([]);
     const [search, setSearch] = useState("");
@@ -12,8 +14,8 @@ const Transaction = () => {
         const fetchData = async () => {
             try {
                 const [transactionsRes, clientsRes] = await Promise.all([
-                    axios.get("http://localhost:4000/transactions"),
-                    axios.get("http://localhost:4000/clients")
+                    axios.get(`${apiUrl}/transactions`),
+                    axios.get(`${apiUrl}/clients`)
                 ]);
 
                 const sortedTransactions = transactionsRes.data.sort(

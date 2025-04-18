@@ -5,6 +5,8 @@ import InvestmentModal from "../components/InvestmentModal";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const Home = () => {
     const [formData, setFormData] = useState({
         type: "buy",
@@ -41,7 +43,7 @@ const Home = () => {
     };
 
     useEffect(() => {
-        const fetchBusinessData = axios.get("http://localhost:4000/businesses");
+        const fetchBusinessData = axios.get(`${apiUrl}/businesses`);
         const fetchExchangeRates = axios.get("https://api.bluelytics.com.ar/v2/latest");
 
         Promise.all([fetchBusinessData, fetchExchangeRates])
@@ -96,10 +98,10 @@ const Home = () => {
         };
 
         try {
-            await axios.post("http://localhost:4000/transactions", transactionData);
+            await axios.post(`${apiUrl}/transactions`, transactionData);
             toast.success("Transacción realizada con éxito");
 
-            const response = await axios.get("http://localhost:4000/businesses");
+            const response = await axios.get(`${apiUrl}/businesses`);
             setBusinessData(response.data);
 
             setFormData({ type:"buy", fromCurrency: "ars", toCurrency:"usd", id_client:"", amount:"", price:"" });
@@ -123,13 +125,13 @@ const Home = () => {
         }
 
         try {
-            await axios.put("http://localhost:4000/businesses/update", {
+            await axios.put(`${apiUrl}//businesses/update`, {
                 currency: selectedCurrency,
                 amount: parseInt(investmentAmount)
             });
 
             toast.success("Inversión agregada con éxito");
-            const response = await axios.get("http://localhost:4000/businesses");
+            const response = await axios.get(`${apiUrl}/businesses`);
             setBusinessData(response.data);
             closeInvestmenModal();
         } catch(error) {

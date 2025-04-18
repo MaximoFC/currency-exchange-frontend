@@ -4,6 +4,8 @@ import { ThreeDots } from "react-loader-spinner";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const Clients = () => {
     const [formData, setFormData] = useState({
         name: "",
@@ -15,7 +17,7 @@ const Clients = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("http://localhost:4000/clients")
+        axios.get(`${apiUrl}/clients`)
             .then(response => {
                 setClients(response.data);
                 setLoading(false);
@@ -35,7 +37,7 @@ const Clients = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:4000/clients", formData);
+            const response = await axios.post(`${apiUrl}/clients`, formData);
             toast.success("Cliente registrado con éxito");
 
             setFormData({name: "", cell:""});

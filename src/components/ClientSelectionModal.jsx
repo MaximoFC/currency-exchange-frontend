@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const ClientSelectionModal = ({ onSelect, onClose }) => {
     const [clients, setClients] = useState([]);
     const [search, setSearch] = useState("");
@@ -14,7 +16,7 @@ const ClientSelectionModal = ({ onSelect, onClose }) => {
     }
 
     useEffect(() => {
-        axios.get("http://localhost:4000/clients")
+        axios.get(`${apiUrl}/clients`)
             .then(response => {
                 setClients(response.data);
                 setLoading(false);
