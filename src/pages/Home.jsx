@@ -125,7 +125,7 @@ const Home = () => {
         }
 
         try {
-            await axios.put(`${apiUrl}//businesses/update`, {
+            await axios.put(`${apiUrl}/businesses/update`, {
                 currency: selectedCurrency,
                 amount: parseInt(investmentAmount)
             });
